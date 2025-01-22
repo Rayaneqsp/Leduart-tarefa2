@@ -1,62 +1,52 @@
+#include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
-#include "hardware/gpio.h"
-///
-#define LED_VERDE_PIN 11
-#define LED_AZUL_PIN 12
-#define LED_VERMELHO_PIN 13
-#define BUZZER_PIN 21
 
-// Função para configurar a UART
-void init_uart() {
-    uart_init(uart0, 115200);  // Inicializa a UART0 com baud rate de 115200
-    gpio_set_function(0, GPIO_FUNC_UART);  // Pino 0 (TX)
-    gpio_set_function(1, GPIO_FUNC_UART);  // Pino 1 (RX)
-}
+// Definição dos pinos
+#define PINO_LED_VERMELHO  15
+#define PINO_LED_VERDE     14
+#define PINO_LED_AZUL      13
+#define PINO_BUZZER        16
+#define PINO_UART_RX       0
+#define PINO_UART_TX       1
 
-// Função para acionar o LED verde
-void led_verde_on() {
-    gpio_put(LED_VERDE_PIN, 1);
-    gpio_put(LED_AZUL_PIN, 0);
-    gpio_put(LED_VERMELHO_PIN, 0);
-}
-
-// Função para acionar o LED azul
-void led_azul_on() {
-    gpio_put(LED_VERDE_PIN, 0);
-    gpio_put(LED_AZUL_PIN, 1);
-    gpio_put(LED_VERMELHO_PIN, 0);
-}
-
-// Função para acionar o LED vermelho
+// Funções para acender LEDs
 void led_vermelho_on() {
-    gpio_put(LED_VERDE_PIN, 0);
-    gpio_put(LED_AZUL_PIN, 0);
-    gpio_put(LED_VERMELHO_PIN, 1);
+    gpio_put(PINO_LED_VERMELHO, 1);
+    gpio_put(PINO_LED_VERDE, 0);
+    gpio_put(PINO_LED_AZUL, 0);
 }
 
-// Função para acionar os três LEDs (branco)
+void led_verde_on() {
+    gpio_put(PINO_LED_VERMELHO, 0);
+    gpio_put(PINO_LED_VERDE, 1);
+    gpio_put(PINO_LED_AZUL, 0);
+}
+
+void led_azul_on() {
+    gpio_put(PINO_LED_VERMELHO, 0);
+    gpio_put(PINO_LED_VERDE, 0);
+    gpio_put(PINO_LED_AZUL, 1);
+}
+
 void led_branco_on() {
-    gpio_put(LED_VERDE_PIN, 1);
-    gpio_put(LED_AZUL_PIN, 1);
-    gpio_put(LED_VERMELHO_PIN, 1);
+    gpio_put(PINO_LED_VERMELHO, 1);
+    gpio_put(PINO_LED_VERDE, 1);
+    gpio_put(PINO_LED_AZUL, 1);
 }
 
-// Função para desligar todos os LEDs
 void leds_off() {
-    gpio_put(LED_VERDE_PIN, 0);
-    gpio_put(LED_AZUL_PIN, 0);
-    gpio_put(LED_VERMELHO_PIN, 0);
+    gpio_put(PINO_LED_VERMELHO, 0);
+    gpio_put(PINO_LED_VERDE, 0);
+    gpio_put(PINO_LED_AZUL, 0);
 }
 
-// Função para acionar o buzzer
+// Função para ligar o buzzer
 void buzzer_on() {
-    gpio_put(BUZZER_PIN, 1);
-    sleep_ms(2000);  // Buzzer ligado por 2 segundos
-    gpio_put(BUZZER_PIN, 0);
+    gpio_put(PINO_BUZZER, 1);
 }
 
-// Função para processar comandos recebidos via UART
+// Função para processar comandos recebidos pela UART
 void process_command(char command) {
     switch (command) {
         case 'V':  // Verde
@@ -77,38 +67,40 @@ void process_command(char command) {
         case 'Z':  // Buzzer
             buzzer_on();
             break;
-        case 'S':  // Reset
-            // Para reiniciar o microcontrolador, podemos usar o seguinte:
-            reboot();  // Reinicia o sistema
-            break;
         default:
             break;
     }
 }
 
 int main() {
-    // Inicializar os pinos GPIO para os LEDs e o buzzer
-    gpio_init(LED_VERDE_PIN);
-    gpio_set_dir(LED_VERDE_PIN, GPIO_OUT);
-    gpio_init(LED_AZUL_PIN);
-    gpio_set_dir(LED_AZUL_PIN, GPIO_OUT);
-    gpio_init(LED_VERMELHO_PIN);
-    gpio_set_dir(LED_VERMELHO_PIN, GPIO_OUT);
-    gpio_init(BUZZER_PIN);
-    gpio_set_dir(BUZZER_PIN, GPIO_OUT);
+    // Inicializa os pinos GPIO
+    gpio_init(PINO_LED_VERMELHO);
+    gpio_set_dir(PINO_LED_VERMELHO, GPIO_OUT);
+    gpio_init(PINO_LED_VERDE);
+    gpio_set_dir(PINO_LED_VERDE, GPIO_OUT);
+    gpio_init(PINO_LED_AZUL);
+    gpio_set_dir(PINO_LED_AZUL, GPIO_OUT);
+    gpio_init(PINO_BUZZER);
+    gpio_set_dir(PINO_BUZZER, GPIO_OUT);
 
-    // Inicializar a UART
-    init_uart();
+    // Inicializa a UART
+    uart_init(uart0, 9600);
+    gpio_set_function(PINO_UART_RX, GPIO_FUNC_UART);
+    gpio_set_function(PINO_UART_TX, GPIO_FUNC_UART);
+
+    // Inicializa a UART para monitoramento
+    printf("Sistema iniciado. Aguardando comandos...\n");
 
     // Loop principal
     while (true) {
+        // Espera por dados da UART
         if (uart_is_readable(uart0)) {
-            // Lê o comando enviado via UART
             char command = uart_getc(uart0);
-
-            // Processa o comando
             process_command(command);
         }
+
+        // Adiciona um pequeno delay para evitar o uso excessivo da CPU
+        sleep_ms(100);
     }
 
     return 0;
