@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "hardware/uart.h"
 
 // Definição dos pinos
-#define PINO_LED_VERMELHO  15
-#define PINO_LED_VERDE     14
-#define PINO_LED_AZUL      13
-#define PINO_BUZZER        16
-#define PINO_UART_RX       0
-#define PINO_UART_TX       1
+#define PINO_LED_VERMELHO  13
+#define PINO_LED_VERDE     11
+#define PINO_LED_AZUL      12
+#define PINO_BUZZER        21
 
 // Funções para acender LEDs
 void led_vermelho_on() {
@@ -44,6 +41,8 @@ void leds_off() {
 // Função para ligar o buzzer
 void buzzer_on() {
     gpio_put(PINO_BUZZER, 1);
+    sleep_ms(2000);  // Mantém o buzzer ligado por 2 segundos
+    gpio_put(PINO_BUZZER, 0); // Desliga o buzzer
 }
 
 // Função para processar comandos recebidos pela UART
@@ -68,6 +67,7 @@ void process_command(char command) {
             buzzer_on();
             break;
         default:
+            printf("Comando desconhecido: %c\n", command);
             break;
     }
 }
@@ -83,19 +83,15 @@ int main() {
     gpio_init(PINO_BUZZER);
     gpio_set_dir(PINO_BUZZER, GPIO_OUT);
 
-    // Inicializa a UART
-    uart_init(uart0, 9600);
-    gpio_set_function(PINO_UART_RX, GPIO_FUNC_UART);
-    gpio_set_function(PINO_UART_TX, GPIO_FUNC_UART);
-
-    // Inicializa a UART para monitoramento
+    // Inicializa o console serial
+    stdio_init_all();
     printf("Sistema iniciado. Aguardando comandos...\n");
 
     // Loop principal
     while (true) {
-        // Espera por dados da UART
-        if (uart_is_readable(uart0)) {
-            char command = uart_getc(uart0);
+        // Espera por comandos do console serial
+        if (stdio_uart_connected()) {
+            char command = getchar();  // Recebe um caractere do console
             process_command(command);
         }
 
