@@ -1,1 +1,5 @@
-# Leduart-tarefa2
+Este programa foi desenvolvido para controlar LEDs RGB e um buzzer em um Raspberry Pi Pico. Ele utiliza a linguagem C e a biblioteca `pico/stdlib.h` para acessar as funcionalidades de GPIO e comunicação serial. O sistema alterna entre as cores dos LEDs vermelho, verde, azul e branco, acendendo cada cor por 3 segundos. Após o ciclo de LEDs, o buzzer é acionado por 2 segundos, gerando um som intermitente. O ciclo é repetido continuamente até que o sistema seja desligado.
+
+A cada 3 segundos, o programa acende um LED de cor diferente: começa com o vermelho, seguido do verde, azul e finalmente todos os LEDs acesos (branco). Após isso, o buzzer é ativado para gerar um som contínuo. O Raspberry Pi Pico está configurado para enviar mensagens ao terminal via USB, permitindo o monitoramento do status do sistema. O programa foi projetado para rodar indefinidamente, criando um ciclo visual e auditivo interativo. 
+
+As funções para controle dos LEDs e buzzer são bem definidas e executadas em sequência dentro do loop principal. O código utiliza as funções de `gpio_put` para controlar o estado dos pinos e `sleep_ms` para gerenciar o tempo de espera entre as ações.
