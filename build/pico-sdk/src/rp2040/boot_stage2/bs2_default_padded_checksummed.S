@@ -1,4 +1,4 @@
-// Padded and checksummed version of: C:/Users/Ray/Pictures/Leduart-tarefa2-1/build/pico-sdk/src/rp2040/boot_stage2/bs2_default.bin
+// Padded and checksummed version of: C:/Users/Ray/Videos/Leduart-tarefa2/build/pico-sdk/src/rp2040/boot_stage2/bs2_default.bin
 
 .cpu cortex-m0plus
 .thumb

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-// Definição dos pinos
 #define PINO_LED_VERMELHO  13
 #define PINO_LED_VERDE     11
 #define PINO_LED_AZUL      12
@@ -40,9 +39,13 @@ void leds_off() {
 
 // Função para ligar o buzzer
 void buzzer_on() {
-    gpio_put(PINO_BUZZER, 1);  // Liga o buzzer
-    sleep_ms(2000);  // Mantém o buzzer ligado por 2 segundos
-    gpio_put(PINO_BUZZER, 0);  // Desliga o buzzer
+    printf("Buzzer acionado\n");
+    for (int i = 0; i < 1000; i++) {  
+        gpio_put(PINO_BUZZER, 1);  
+        gpio_put(PINO_BUZZER, 0);  
+        sleep_us(500);  
+    }
+    printf("Buzzer desligado\n");
 }
 
 int main() {
@@ -62,31 +65,28 @@ int main() {
 
     // Loop principal
     while (true) {
-        // Aciona o LED vermelho
         led_vermelho_on();
-        sleep_ms(3000);  // Aguarda 3 segundos
+        sleep_ms(3000);  
 
-        // Aciona o LED verde
         led_verde_on();
-        sleep_ms(3000);  // Aguarda 3 segundos
+        sleep_ms(3000); 
 
-        // Aciona o LED azul
         led_azul_on();
-        sleep_ms(3000);  // Aguarda 3 segundos
+        sleep_ms(3000);  
 
-        // Aciona os LEDs todos acesos (branco)
         led_branco_on();
-        sleep_ms(3000);  // Aguarda 3 segundos com luz branca acesa
+        sleep_ms(3000);  
 
-        // Desliga todos os LEDs
+        
         leds_off();
         
         // Aciona o buzzer por 2 segundos
-        buzzer_on();  // Toca o buzzer por 2 segundos
+        buzzer_on(); 
 
         // Pausa de 1 segundo antes de reiniciar o ciclo
-        sleep_ms(1000);  // Aguarda 1 segundo antes de reiniciar o ciclo
+        sleep_ms(1000);  
     }
 
     return 0;
 }
+
