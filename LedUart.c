@@ -7,7 +7,7 @@
 #define PINO_LED_AZUL      12
 #define PINO_BUZZER        21
 
-// Funções para acender LEDs
+// Funções para acender LEDs RGB
 void led_vermelho_on() {
     gpio_put(PINO_LED_VERMELHO, 1);
     gpio_put(PINO_LED_VERDE, 0);
@@ -40,9 +40,9 @@ void leds_off() {
 
 // Função para ligar o buzzer
 void buzzer_on() {
-    gpio_put(PINO_BUZZER, 1);
+    gpio_put(PINO_BUZZER, 1);  // Liga o buzzer
     sleep_ms(2000);  // Mantém o buzzer ligado por 2 segundos
-    gpio_put(PINO_BUZZER, 0); // Desliga o buzzer
+    gpio_put(PINO_BUZZER, 0);  // Desliga o buzzer
 }
 
 int main() {
@@ -74,13 +74,17 @@ int main() {
         led_azul_on();
         sleep_ms(3000);  // Aguarda 3 segundos
 
-        // Aciona os LEDs todos acesos (branco) e toca o buzzer
+        // Aciona os LEDs todos acesos (branco)
         led_branco_on();
-        buzzer_on();  // Toca o buzzer por 2 segundos
-        sleep_ms(3000);  // Aguarda 3 segundos para completar o ciclo
+        sleep_ms(3000);  // Aguarda 3 segundos com luz branca acesa
 
         // Desliga todos os LEDs
         leds_off();
+        
+        // Aciona o buzzer por 2 segundos
+        buzzer_on();  // Toca o buzzer por 2 segundos
+
+        // Pausa de 1 segundo antes de reiniciar o ciclo
         sleep_ms(1000);  // Aguarda 1 segundo antes de reiniciar o ciclo
     }
 
