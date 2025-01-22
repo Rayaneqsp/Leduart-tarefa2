@@ -45,33 +45,6 @@ void buzzer_on() {
     gpio_put(PINO_BUZZER, 0); // Desliga o buzzer
 }
 
-// Função para processar comandos recebidos pela UART
-void process_command(char command) {
-    switch (command) {
-        case 'V':  // Verde
-            led_verde_on();
-            break;
-        case 'A':  // Azul
-            led_azul_on();
-            break;
-        case 'R':  // Vermelho
-            led_vermelho_on();
-            break;
-        case 'B':  // Branco
-            led_branco_on();
-            break;
-        case 'D':  // Desligar LEDs
-            leds_off();
-            break;
-        case 'Z':  // Buzzer
-            buzzer_on();
-            break;
-        default:
-            printf("Comando desconhecido: %c\n", command);
-            break;
-    }
-}
-
 int main() {
     // Inicializa os pinos GPIO
     gpio_init(PINO_LED_VERMELHO);
@@ -85,18 +58,30 @@ int main() {
 
     // Inicializa o console serial
     stdio_init_all();
-    printf("Sistema iniciado. Aguardando comandos...\n");
+    printf("Sistema iniciado. LEDs alternando a cada 3 segundos...\n");
 
     // Loop principal
     while (true) {
-        // Espera por comandos do console serial
-        if (stdio_uart_connected()) {
-            char command = getchar();  // Recebe um caractere do console
-            process_command(command);
-        }
+        // Aciona o LED vermelho
+        led_vermelho_on();
+        sleep_ms(3000);  // Aguarda 3 segundos
 
-        // Adiciona um pequeno delay para evitar o uso excessivo da CPU
-        sleep_ms(100);
+        // Aciona o LED verde
+        led_verde_on();
+        sleep_ms(3000);  // Aguarda 3 segundos
+
+        // Aciona o LED azul
+        led_azul_on();
+        sleep_ms(3000);  // Aguarda 3 segundos
+
+        // Aciona os LEDs todos acesos (branco) e toca o buzzer
+        led_branco_on();
+        buzzer_on();  // Toca o buzzer por 2 segundos
+        sleep_ms(3000);  // Aguarda 3 segundos para completar o ciclo
+
+        // Desliga todos os LEDs
+        leds_off();
+        sleep_ms(1000);  // Aguarda 1 segundo antes de reiniciar o ciclo
     }
 
     return 0;
