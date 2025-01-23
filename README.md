@@ -8,4 +8,4 @@ Este programa funciona com uma comunicação simples entre o Raspberry Pi Pico W
 
 É uma maneira divertida e fácil de interagir com os LEDs e buzzer do Raspberry Pi Pico W, e também um excelente exercício para testar o controle de periféricos em sistemas embarcados.
 
-Link do vídeo: https://drive.google.com/file/d/1SIPY_6YH3vbsOpMZUI_jTt8j5rmhMVgj/view?usp=drive_link
+Link do vídeo: https://www.dropbox.com/scl/fi/1jdj6453j3trvr89hsotu/video-atividade-2-uart-1-1.mp4?rlkey=33obrciytmjquqlr01losuvcx&st=48fzohee&dl=0
