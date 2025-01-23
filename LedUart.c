@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdio.h>
 #include "pico/stdlib.h"
 
 // Definição dos pinos dos LEDs e buzzer
@@ -7,10 +6,6 @@
 #define PINO_LED_VERDE     11
 #define PINO_LED_AZUL      12
 #define PINO_BUZZER        21
-
-// Definindo pinos para UART (caso queira usar UART)
-#define UART_TX_PIN        0
-#define UART_RX_PIN        1
 
 // Funções para acender LEDs RGB
 void led_vermelho_on() {
@@ -57,8 +52,8 @@ void buzzer_on() {
 // Função para inicializar a UART
 void uart_custom_init() {
     uart_init(uart0, 9600);  // Inicia UART0 com taxa de 9600 baud
-    gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);  // Define o pino TX
-    gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);  // Define o pino RX
+    gpio_set_function(0, GPIO_FUNC_UART);  
+    gpio_set_function(1, GPIO_FUNC_UART);  
 }
 
 int main() {
@@ -74,33 +69,45 @@ int main() {
 
     // Inicializa o console serial e a UART personalizada
     stdio_init_all();
-    uart_custom_init();  // Usa o nome renomeado para inicializar a UART
+    uart_custom_init();  
 
-    printf("Sistema iniciado. LEDs alternando a cada 3 segundos...\n");
+    printf("Sistema iniciado. Pressione 'Espaço' para alternar as cores dos LEDs e ativar o buzzer.\n");
+
+    
+    char comando;
 
     while (true) {
-        // Alterna entre as cores
-        led_vermelho_on();
-        sleep_ms(3000);  // Aguarda 3 segundos
+        // Aguarda o usuário enviar um comando via UART
+        if (uart_is_readable(uart0)) {
+            comando = uart_getc(uart0);  // Lê o comando recebido pela UART
 
-        led_verde_on();
-        sleep_ms(3000);  // Aguarda 3 segundos
+            
+            if (comando == ' ') {
+                printf("Iniciando troca de cores...\n");
 
-        led_azul_on();
-        sleep_ms(3000);  // Aguarda 3 segundos
+                // Alterna entre as cores com duração de 2 segundos cada
+                led_vermelho_on();
+                sleep_ms(2000);  
 
-        led_branco_on();
-        sleep_ms(3000);  // Aguarda 3 segundos
+                led_verde_on();
+                sleep_ms(2000);  
 
-        // Desliga todos os LEDs
-        leds_off();
+                led_azul_on();
+                sleep_ms(2000);  
 
-        // Aciona o buzzer por 2 segundos
-        buzzer_on();
-        sleep_ms(2000);  // Duração do som
+                led_branco_on();
+                sleep_ms(2000);  
 
-        // Pausa de 2 segundos antes de reiniciar o ciclo
-        sleep_ms(2000);
+                // Desliga todos os LEDs
+                leds_off();
+
+                // Aciona o buzzer por 2 segundos
+                buzzer_on();
+                sleep_ms(2000);  
+
+                printf("Ciclo completo. Pressione 'Espaço' novamente para reiniciar.\n");
+            }
+        }
     }
 
     return 0;
